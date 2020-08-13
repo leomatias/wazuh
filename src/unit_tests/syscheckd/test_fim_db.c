@@ -2725,7 +2725,7 @@ void test_fim_db_create_temp_file_disk(void **state) {
 
     assert_non_null(ret);
     assert_non_null(ret->fd);
-    assert_string_equal(ret->path, FIM_DB_TMPDIR"tmp_1928374652345");
+    assert_string_equal(ret->path, FIM_DB_TMPDIR"tmp_1928374652345123456");
 }
 
 void test_fim_db_create_temp_file_disk_error(void **state) {

@@ -109,17 +109,17 @@ list(APPEND syscheckd_tests_names "test_syscheck_audit")
 if(${TARGET} STREQUAL "winagent")
   list(APPEND syscheckd_tests_flags " ")
 else()
-  list(APPEND syscheckd_tests_flags "-Wl,--wrap,OS_ConnectUnixDomain -Wl,--wrap,fprintf -Wl,--wrap,IsSocket \
-                                     -Wl,--wrap,IsFile -Wl,--wrap,IsDir -Wl,--wrap,IsLink -Wl,--wrap,IsFile \
+  list(APPEND syscheckd_tests_flags "-Wl,--wrap,OS_ConnectUnixDomain -Wl,--wrap,fprintf -Wl,--wrap,IsSocket -Wl,--wrap,sleep \
+                                     -Wl,--wrap,IsFile -Wl,--wrap,IsDir -Wl,--wrap,IsLink -Wl,--wrap,audit_delete_rule \
                                      -Wl,--wrap,audit_restart -Wl,--wrap,_minfo -Wl,--wrap,_merror -Wl,--wrap,fopen \
-                                     -Wl,--wrap,fclose -Wl,--wrap,symlink -Wl,--wrap,unlink -Wl,--wrap,fwrite \
+                                     -Wl,--wrap,fclose -Wl,--wrap,symlink -Wl,--wrap,unlink -Wl,--wrap,fwrite -Wl,--wrap,recv \
                                      -Wl,--wrap,audit_open -Wl,--wrap,audit_get_rule_list -Wl,--wrap,audit_close \
-                                     -Wl,--wrap,_mdebug1 -Wl,--wrap,_mwarn -Wl,--wrap,W_Vector_length \
-                                     -Wl,--wrap,search_audit_rule -Wl,--wrap,audit_add_rule \
-                                     -Wl,--wrap,W_Vector_insert_unique -Wl,--wrap,SendMSG \
-                                     -Wl,--wrap,fim_whodata_event -Wl,--wrap,fflush -Wl,--wrap,fgets \
-                                     -Wl,--wrap,openproc -Wl,--wrap,readproc -Wl,--wrap,freeproc \
-                                     -Wl,--wrap,closeproc -Wl,--wrap,_mdebug2 -Wl,--wrap,get_user \
+                                     -Wl,--wrap,_mdebug1 -Wl,--wrap,_mwarn -Wl,--wrap,W_Vector_length -Wl,--wrap,select  \
+                                     -Wl,--wrap,search_audit_rule -Wl,--wrap,audit_add_rule -Wl,--wrap,pthread_cond_wait \
+                                     -Wl,--wrap,W_Vector_insert_unique -Wl,--wrap,SendMSG -Wl,--wrap,pthread_cond_init \
+                                     -Wl,--wrap,fim_whodata_event -Wl,--wrap,fflush -Wl,--wrap,fgets -Wl,--wrap,CreateThread \
+                                     -Wl,--wrap,openproc -Wl,--wrap,readproc -Wl,--wrap,freeproc -Wl,--wrap,pthread_mutex_lock \
+                                     -Wl,--wrap,closeproc -Wl,--wrap,_mdebug2 -Wl,--wrap,get_user -Wl,--wrap,pthread_mutex_unlock \
                                      -Wl,--wrap,get_group -Wl,--wrap,realpath -Wl,--wrap,readlink -Wl,--wrap,fread \
                                      -Wl,--wrap,fseek -Wl,--wrap,remove -Wl,--wrap,atexit -Wl,--wrap,getpid")
 endif()
@@ -163,7 +163,7 @@ else()
   list(APPEND syscheckd_tests_flags "${RUN_REALTIME_BASE_FLAGS}")
 endif()
 
-set(SYSCHECK_CONFIG_BASE_FLAGS "-Wl,--wrap,_merror -Wl,--wrap,_mdebug1")
+set(SYSCHECK_CONFIG_BASE_FLAGS "-Wl,--wrap,_merror -Wl,--wrap,_mdebug1 -Wl,--wrap,_mwarn")
 
 list(APPEND syscheckd_tests_names "test_syscheck_config")
 if(${TARGET} STREQUAL "agent")
@@ -229,7 +229,7 @@ set(FIM_DB_BASE_FLAGS "-Wl,--wrap=w_is_file,--wrap=remove,--wrap=sqlite3_open_v2
                        -Wl,--wrap=sqlite3_clear_bindings -Wl,--wrap=sqlite3_errmsg,--wrap=sqlite3_bind_int \
                        -Wl,--wrap=sqlite3_bind_text,--wrap=sqlite3_column_int -Wl,--wrap=sqlite3_column_text \
                        -Wl,--wrap=fim_send_sync_msg,--wrap=dbsync_state_msg -Wl,--wrap=fim_entry_json \
-                       -Wl,--wrap=sqlite3_last_insert_rowid,--wrap=EVP_DigestUpdate \
+                       -Wl,--wrap=sqlite3_last_insert_rowid,--wrap=EVP_DigestUpdate,--wrap=os_random \
                        -Wl,--wrap=fim_configuration_directory,--wrap=fim_json_event,--wrap=send_syscheck_msg \
                        -Wl,--wrap=delete_target_file,--wrap=_minfo,--wrap=_mdebug1,--wrap=_mdebug2 -Wl,--wrap=fseek \
                        -Wl,--wrap=fclose,--wrap=fopen,--wrap=getpid,--wrap=fflush -Wl,--wrap=wstr_escape_json \
@@ -261,7 +261,8 @@ if(${TARGET} STREQUAL "winagent")
                                            -Wl,--wrap=fim_configuration_directory,--wrap=fim_checker,--wrap=OSHash_Get \
                                            -Wl,--wrap=convert_windows_string,--wrap=OSHash_Get_ex,--wrap=FOREVER \
                                            -Wl,--wrap=fflush,--wrap=fread,--wrap=fseek,--wrap=fwrite,--wrap=fprintf \
-                                           -Wl,--wrap=fgets -Wl,--wrap=wstr_split")
+                                           -Wl,--wrap=fgets -Wl,--wrap=wstr_split \
+                                           -Wl,--wrap=pthread_rwlock_wrlock,--wrap=pthread_rwlock_unlock")
 endif()
 
 # Compiling tests
